@@ -1,0 +1,6 @@
+@Net_Identity_Auth_HostAddress = http://localhost:5098
+
+GET {{Net_Identity_Auth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
