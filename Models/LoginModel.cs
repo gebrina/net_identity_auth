@@ -1,14 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+
 namespace Net_Identity_Auth.Models;
 
-public class UserModel
+public class LoginModel
 {
-    [Required]
-    public string? FirstName { get; set; }
-
-    [Required]
-    public string? LastName { get; set; }
-
     [Required]
     [EmailAddress]
     [DataType(DataType.EmailAddress)]
@@ -23,5 +18,4 @@ public class UserModel
     [Compare("Password", ErrorMessage = "Confirm password should match with password")]
     public string? ConfirmPassword { get; set; }
 
-    public string? Occupation { get; set; }
 }
