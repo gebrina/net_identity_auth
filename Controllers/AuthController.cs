@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
 using Net_Identity_Auth.Models;
 
 namespace Net_Identity_Auth.Controllers;
@@ -21,7 +22,17 @@ public class AuthController : ControllerBase
     [HttpGet]
     public ActionResult Users()
     {
-        var users = _userManager.Users.ToList();
+        var users = _userManager.Users.ToList().Select(
+            user => new
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.UserName,
+                EmailAddress = user.Email,
+                Occupation = user.Occupation,
+            }
+        );
 
         return Ok(users);
     }
