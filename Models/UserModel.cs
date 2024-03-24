@@ -26,4 +26,6 @@ public class UserModel
     public string? ConfirmPassword { get; set; }
 
     public string? Occupation { get; set; }
+
+    public ICollection<RoleModel>? Roles { get; set; }
 }
