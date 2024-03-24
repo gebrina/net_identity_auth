@@ -23,20 +23,17 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult Users()
+    public async Task<ActionResult> Users()
     {
-        var users = _userManager.Users.ToList().Select(
-            user => new UserModel
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                EmailAddress = user.Email,
-                Occupation = user.Occupation,
-            }
-        );
-
-        return Ok(users);
+        var users = _userManager.Users.ToList();
+        IList<UserModel> userModels = new List<UserModel>();
+        foreach (var user in users)
+        {
+            var userWithRoles = await AddRoleToUser(IntializeUserModel(user));
+            userModels.Add(userWithRoles);
+        }
+        var usersWithOutPassword = userModels.Select(user => RemovePassword(user));
+        return Ok(usersWithOutPassword);
     }
 
     [HttpGet]
@@ -44,16 +41,8 @@ public class AuthController : ControllerBase
     public async Task<ActionResult> GetUserById(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
-        UserModel userModel = new UserModel
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Occupation = user.Occupation,
-            EmailAddress = user.Email,
-            Roles = new List<RoleModel>()
-        };
-        var userWithRoles = await AddRoleToUser(userModel);
+
+        var userWithRoles = await AddRoleToUser(IntializeUserModel(user));
 
         return Ok(userWithRoles);
     }
@@ -97,6 +86,7 @@ public class AuthController : ControllerBase
     public async Task<UserModel> AddRoleToUser(UserModel userModel)
     {
         if (userModel.Id == null) throw new ArgumentNullException();
+
         var roles = _roleManager.Roles.ToList();
         var user = await _userManager.FindByIdAsync(userModel.Id);
         foreach (var role in roles)
@@ -107,5 +97,35 @@ public class AuthController : ControllerBase
             }
         }
         return userModel;
+    }
+
+    [NonAction]
+    public UserModel IntializeUserModel(ApplicatoinUser user)
+    {
+        UserModel userModel = new UserModel
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Occupation = user.Occupation,
+            EmailAddress = user.Email,
+            Roles = new List<RoleModel>()
+        };
+
+        return userModel;
+    }
+    [NonAction]
+    public object RemovePassword(UserModel userModel)
+    {
+        var user = new
+        {
+            Id = userModel.Id,
+            FirstName = userModel.FirstName,
+            LastName = userModel.LastName,
+            EmailAddress = userModel.EmailAddress,
+            Occupation = userModel.Occupation,
+            Roles = userModel.Roles
+        };
+        return user;
     }
 }
