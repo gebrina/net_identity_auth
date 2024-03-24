@@ -41,10 +41,9 @@ public class AuthController : ControllerBase
     public async Task<ActionResult> GetUserById(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
-
         var userWithRoles = await AddRoleToUser(IntializeUserModel(user));
-
-        return Ok(userWithRoles);
+        var userWithOutPassword = RemovePassword(userWithRoles);
+        return Ok(userWithOutPassword);
     }
 
     [HttpPost]
