@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
 using Net_Identity_Auth.Models;
 
 namespace Net_Identity_Auth.Controllers;
@@ -117,6 +116,19 @@ public class AuthController : ControllerBase
         }
         return BadRequest(ModelState);
     }
+
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<ActionResult> DeleteUser(string id)
+    {
+        if (id == null) return BadRequest();
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null) return BadRequest();
+        await _userManager.DeleteAsync(user);
+
+        return NoContent();
+    }
+
     [NonAction]
     public async Task<UserModel> AddRoleToUser(UserModel userModel)
     {
