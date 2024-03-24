@@ -31,7 +31,11 @@ public class RoleController : ControllerBase
         if (!ModelState.IsValid) return BadRequest();
         IdentityRole role = new IdentityRole { Name = roleModel.RoleName };
         IdentityResult result = await _roleManager.CreateAsync(role);
-        if (result.Succeeded) return CreatedAtAction(nameof(Create), new { Id = role.Id, RoleName = role.Name });
+        if (result.Succeeded)
+        {
+            _logger.LogInformation("New role created...");
+            return CreatedAtAction(nameof(Create), new { Id = role.Id, RoleName = role.Name });
+        }
 
         foreach (IdentityError error in result.Errors)
         {
