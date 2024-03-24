@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Net_Identity_Auth.Controllers;
 
+[ApiController]
+[Route("api/[controller]/[action]")]
 public class RoleController : ControllerBase
 {
     private RoleManager<IdentityRole> _roleManager;
