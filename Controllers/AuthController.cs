@@ -81,6 +81,42 @@ public class AuthController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<ActionResult> UpdateUser(string id, [FromBody] UpdateUserModel userModel)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null) return BadRequest();
+        user.FirstName = userModel.FirstName;
+        user.LastName = userModel.LastName;
+        user.Email = userModel.EmailAddress;
+        user.UserName = userModel.EmailAddress;
+        user.Occupation = userModel.Occupation;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (result.Succeeded && userModel.Roles?.Count > 0)
+        {
+            var roles = _roleManager.Roles.ToList();
+            foreach (var role in userModel.Roles)
+            {
+                if (!await _userManager.IsInRoleAsync(user, role.RoleName))
+                    await _userManager.AddToRoleAsync(user, role.RoleName);
+            }
+            foreach (var role in roles)
+            {
+                var isStillInRole = userModel.Roles.FirstOrDefault(r => r.RoleName == role.Name);
+                if (isStillInRole == null) await _userManager.RemoveFromRoleAsync(user, role.Name);
+            }
+            return Ok(new { message = "User info updated successfully." });
+        }
+        foreach (var error in result.Errors)
+        {
+            ModelState.TryAddModelError(error.Code, error.Description);
+        }
+        return BadRequest(ModelState);
+    }
     [NonAction]
     public async Task<UserModel> AddRoleToUser(UserModel userModel)
     {
