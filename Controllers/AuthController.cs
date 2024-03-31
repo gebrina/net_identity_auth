@@ -146,6 +146,19 @@ public class AuthController : ControllerBase
         return userModel;
     }
 
+    [HttpPost]
+    public async Task<ActionResult> Login(LoginModel model)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+        var user = await _userManager.FindByEmailAsync(model.EmailAddress);
+        if (user == null) return NotFound("No user with such email address");
+        var result = await _signInManager.PasswordSignInAsync(
+            user, model.Password, isPersistent: true, false);
+        if (result.Succeeded) return Ok(new { access_token = "access-token" });
+
+        return BadRequest("Invalid password");
+    }
+
     [NonAction]
     public UserModel IntializeUserModel(ApplicatoinUser user)
     {
@@ -161,6 +174,7 @@ public class AuthController : ControllerBase
 
         return userModel;
     }
+
     [NonAction]
     public object RemovePassword(UserModel userModel)
     {

@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "User auth api",
+        Title = "User Auth API",
         Description = "This api used to authenticate and authorize users",
         Version = "1",
         Contact = new OpenApiContact
