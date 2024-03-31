@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Net_Identity_Auth.DbContext;
 using Net_Identity_Auth.Models;
 
@@ -19,7 +20,19 @@ builder.Services.AddIdentity<ApplicatoinUser, IdentityRole>()
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "User auth api",
+        Description = "This api used to authenticate and authorize users",
+        Version = "1",
+        Contact = new OpenApiContact
+        {
+            Email = "youremail@emailservice.com"
+        }
+    });
+});
 
 var app = builder.Build();
 

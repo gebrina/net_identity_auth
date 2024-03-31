@@ -5,7 +5,7 @@ using Net_Identity_Auth.Models;
 namespace Net_Identity_Auth.Controllers;
 
 [ApiController]
-[Route("/api[controller]/[action]")]
+[Route("api/[controller]/[action]")]
 public class AuthController : ControllerBase
 {
     private readonly SignInManager<ApplicatoinUser> _signInManager;
